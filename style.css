@@ -22,11 +22,11 @@
 }
 
 .logo .rosy {
-    color: #00FF44; /* Rosy color */
+    color: #00FF44;
 }
 
 .nav-links li a:hover {
-    color: #00FF44; /* Rosy color on hover */
+    color: #00FF44; 
 }
 
 header {
