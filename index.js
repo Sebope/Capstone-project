@@ -6,7 +6,7 @@ const searchInput = document.getElementById('search-input');
 const movieList = document.getElementById('movie-list');
 const movieDetails = document.getElementById('movie-details');
 
-//Used to Fetch movie data based on user query
+// Fetch movie data based on user query
 const fetchMovies = async (query) => {
     try {
         const response = await fetch(`${BASE_URL}&s=${query}`);
@@ -21,7 +21,7 @@ const fetchMovies = async (query) => {
     }
 };
 
-// Displays list of movies
+// Display list of movies
 const displayMovies = (movies) => {
     movieList.innerHTML = '';
     movies.forEach(movie => {
@@ -31,13 +31,25 @@ const displayMovies = (movies) => {
             <img src="${movie.Poster}" alt="${movie.Title}">
             <h3>${movie.Title}</h3>
             <p>${movie.Year}</p>
-            <button onclick="fetchMovieDetails('${movie.imdbID}')">Details</button>
+            <button class="details-button" data-id="${movie.imdbID}">Details</button>
         `;
         movieList.appendChild(movieCard);
     });
+    addDetailButtonsListeners();
 };
 
-// Fetches detailed movie information
+// Add event listeners for details buttons
+const addDetailButtonsListeners = () => {
+    const detailButtons = document.querySelectorAll('.details-button');
+    detailButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const movieId = button.getAttribute('data-id');
+            fetchMovieDetails(movieId);
+        });
+    });
+};
+
+// Fetch detailed movie information
 const fetchMovieDetails = async (id) => {
     try {
         const response = await fetch(`${BASE_URL}&i=${id}`);
@@ -48,28 +60,34 @@ const fetchMovieDetails = async (id) => {
     }
 };
 
-// Displays movie details
+// Display movie details
 const displayMovieDetails = (movie) => {
-    movieDetails.classList.remove('hidden');
-    movieDetails.innerHTML = `
-        <h2>${movie.Title}</h2>
-        <img src="${movie.Poster}" alt="${movie.Title}">
-        <p><strong>Plot:</strong> ${movie.Plot}</p>
-        <p><strong>Cast:</strong> ${movie.Actors}</p>
-        <p><strong>Genre:</strong> ${movie.Genre}</p>
-        <p><strong>Ratings:</strong></p>
-        <ul>
-            ${movie.Ratings.map(rating => `<li>${rating.Source}: ${rating.Value}</li>`).join('')}
-        </ul>
-        <button onclick="closeMovieDetails()">Close</button>
-    `;
+  movieDetails.classList.remove('hidden');
+  movieDetails.innerHTML = `
+      <div class="movie-details-container">
+          <img class="movie-poster" src="${movie.Poster}" alt="${movie.Title}">
+          <div class="movie-info">
+              <h2>${movie.Title}</h2>
+              <p><strong>Plot:</strong> ${movie.Plot}</p>
+              <p><strong>Cast:</strong> ${movie.Actors}</p>
+              <p><strong>Genre:</strong> ${movie.Genre}</p>
+              <p><strong>Ratings:</strong></p>
+              <ul>
+                  ${movie.Ratings.map(rating => `<li>${rating.Source}: ${rating.Value}</li>`).join('')}
+              </ul>
+              <button onclick="closeMovieDetails()">Close</button>
+          </div>
+      </div>
+  `;
 };
+
 
 // Close movie details view
 const closeMovieDetails = () => {
     movieDetails.classList.add('hidden');
 };
 
+// Add event listener for search button
 searchButton.addEventListener('click', () => {
     const query = searchInput.value.trim();
     if (query) {
